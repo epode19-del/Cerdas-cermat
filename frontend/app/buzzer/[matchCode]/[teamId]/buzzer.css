@@ -1,0 +1,798 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+.buzzer-scope {
+
+  --room-top:#232a3d;
+  --room-bot:#171c2b;
+  --wood-1:#8a5a34;
+  --wood-2:#764a2a;
+  --wood-3:#5c3a20;
+  --wood-line:#4a2e18;
+  --panel:#333a4f;
+  --panel-dark:#22273a;
+  --panel-edge:#12141f;
+  --led-green:#3ddc84;
+  --led-yellow:#ffd23f;
+  --led-red:#ff5c5c;
+  --btn-red-hi:#ff6b6b;
+  --btn-red:#e63946;
+  --btn-red-lo:#a4222c;
+  --btn-red-dark:#6e1219;
+  --chalk:#f4f1ea;
+  --ink:#1d2233;
+  --marker-blue:#2f6fed;
+  --marker-red:#e63946;
+  --spark:#ffd23f;
+  --spark-2:#ff8c42;
+  font-size:16px;
+
+  font-family: 'VT323', monospace;
+}
+
+.buzzer-scope {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  background:
+    radial-gradient(ellipse at 50% 0%, #2c3450 0%, transparent 60%),
+    linear-gradient(180deg, var(--room-top) 0%, var(--room-bot) 62%, var(--room-bot) 100%);
+  color: var(--chalk);
+  image-rendering: pixelated;
+  position: relative;
+  width: 100%;
+}
+
+.buzzer-scope *{ box-sizing: border-box; }
+
+.buzzer-scope .pixel-font { font-family:'Press Start 2P', monospace; letter-spacing:0.5px; }
+
+/* ---------------- TOP BAR ---------------- */
+
+.buzzer-scope .topbar {
+  width:100%;
+  max-width:980px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:18px 20px 8px;
+  flex-wrap:wrap;
+}
+
+.buzzer-scope .brand {
+  font-size:1.05rem;
+  color:var(--led-yellow);
+  text-shadow:2px 2px 0 var(--panel-edge);
+}
+
+.buzzer-scope .topbar-actions { display:flex; gap:10px; }
+
+.buzzer-scope .pbtn {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.6rem;
+  color:var(--chalk);
+  background:var(--panel);
+  border:2px solid var(--panel-edge);
+  box-shadow: 0 4px 0 var(--panel-edge);
+  padding:10px 12px;
+  cursor:pointer;
+  image-rendering:pixelated;
+  transition:transform .05s ease;
+}
+
+.buzzer-scope .pbtn:hover { filter:brightness(1.15); }
+
+.buzzer-scope .pbtn:active { transform:translateY(4px); box-shadow:0 0 0 var(--panel-edge); }
+
+.buzzer-scope .pbtn.gold { background:#8a6d1f; border-color:#4a3a10; box-shadow:0 4px 0 #4a3a10; color:var(--led-yellow); }
+
+.buzzer-scope .pbtn.card { background:#5b3a8a; border-color:#2e1c4a; box-shadow:0 4px 0 #2e1c4a; color:#e9d9ff; }
+
+/* ---------------- SCENE ---------------- */
+
+.buzzer-scope .scene {
+  position:relative;
+  width:100%;
+  max-width:980px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:0 20px 28px;
+}
+
+/* ---- Whiteboard on the "wall" ---- */
+
+.buzzer-scope .wall-zone {
+  position:relative;
+  padding-top:8px;
+  display:flex;
+  justify-content:center;
+}
+
+.buzzer-scope .whiteboard {
+  position:relative;
+  width:100%;
+  max-width:640px;
+  background:var(--chalk);
+  border:10px solid #cbb994;
+  box-shadow:
+    0 0 0 4px #8a5a34,
+    0 10px 0 rgba(0,0,0,0.35);
+  padding:18px 22px 14px;
+  color:var(--ink);
+  font-family:'VT323', monospace;
+}
+
+.buzzer-scope .pin {
+  position:absolute; width:14px; height:14px; border-radius:50%;
+  box-shadow:0 3px 0 rgba(0,0,0,0.35);
+}
+
+.buzzer-scope .pin.red { background:var(--marker-red); top:-7px; left:14px; }
+
+.buzzer-scope .pin.blue { background:var(--marker-blue); top:-7px; right:14px; }
+
+.buzzer-scope .board-row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+
+.buzzer-scope .board-label {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.55rem;
+  color:#7a6a4a;
+  letter-spacing:1px;
+}
+
+.buzzer-scope .board-points { font-size:1.1rem; color:#7a6a4a; }
+
+.buzzer-scope .soal-text { font-size:1.55rem; line-height:1.25; margin:6px 0 10px; min-height:2.6em; }
+
+.buzzer-scope .jawaban-wrap {
+  border-top:2px dashed #cbb994;
+  padding-top:8px;
+  margin-top:4px;
+}
+
+.buzzer-scope .jawaban-text {
+  font-size:1.35rem;
+  color:var(--marker-blue);
+  min-height:1.4em;
+  filter: blur(6px);
+  transition: filter .35s ease;
+  user-select:none;
+}
+
+.buzzer-scope .jawaban-text.revealed { filter:blur(0); user-select:auto; }
+
+.buzzer-scope .board-controls { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+
+.buzzer-scope .board-controls .pbtn { font-size:0.52rem; }
+
+.buzzer-scope .board-tray {
+  display:flex; gap:10px; justify-content:center; margin-top:-6px; margin-bottom:14px;
+}
+
+.buzzer-scope .prop { width:34px; height:14px; }
+
+.buzzer-scope .marker-red-prop { background:var(--marker-red); border-radius:3px 3px 0 0; }
+
+.buzzer-scope .marker-blue-prop { background:var(--marker-blue); border-radius:3px 3px 0 0; }
+
+.buzzer-scope .eraser-prop { background:#e2e2e2; border:2px solid #b9b9b9; height:16px; }
+
+/* ---- Desk ---- */
+
+.buzzer-scope .desk {
+  position:relative;
+  margin-top:26px;
+  min-height:300px;
+  background:
+    repeating-linear-gradient(90deg, var(--wood-line) 0 2px, transparent 2px 26px),
+    linear-gradient(180deg, var(--wood-1) 0%, var(--wood-2) 55%, var(--wood-3) 100%);
+  border-top:6px solid #a9764a;
+  box-shadow: 0 -2px 0 rgba(0,0,0,0.25) inset, 0 18px 0 rgba(0,0,0,0.3);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:36px;
+  padding:18px 16px 26px;
+}
+
+.buzzer-scope .desk::after {
+  content:"";
+  position:absolute; left:0; right:0; bottom:-18px; height:18px;
+  background:#3a2513;
+}
+
+/* ---- Team nameplate prop ---- */
+
+.buzzer-scope .nameplate {
+  background:#d8c7a1;
+  border:4px solid #4a2e18;
+  box-shadow:0 5px 0 rgba(0,0,0,0.35);
+  padding:10px 14px;
+  min-width:150px;
+  color:#3a2513;
+  text-align:center;
+}
+
+.buzzer-scope .nameplate .team-name {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.62rem;
+  background:transparent;
+  border:none;
+  text-align:center;
+  color:#3a2513;
+  width:100%;
+  outline:none;
+}
+
+.buzzer-scope .nameplate .team-name:focus { background:rgba(255,255,255,0.35); }
+
+.buzzer-scope .points-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:8px; }
+
+.buzzer-scope .points-value { font-size:1.7rem; color:#12141f; position:relative; }
+
+.buzzer-scope .point-pop {
+  position:absolute; left:50%; top:-6px; transform:translateX(-50%);
+  color:var(--led-green); font-size:1rem; font-family:'Press Start 2P', monospace;
+  opacity:0; pointer-events:none;
+}
+
+.buzzer-scope .point-pop.show { animation: bz-popPoint .8s ease forwards; }
+
+@keyframes bz-popPoint {
+  0%{ opacity:0; transform:translate(-50%, 4px) scale(0.8); }
+  25%{ opacity:1; transform:translate(-50%, -14px) scale(1); }
+  100%{ opacity:0; transform:translate(-50%, -34px) scale(1); }
+}
+
+.buzzer-scope .pm-btn {
+  width:24px; height:24px;
+  border:2px solid #4a2e18;
+  background:#c2b092;
+  color:#3a2513;
+  font-weight:bold;
+  cursor:pointer;
+  line-height:1;
+}
+
+.buzzer-scope .pm-btn:active { background:#a99672; }
+
+/* ---- Buzzer unit ---- */
+
+.buzzer-scope .buzzer-unit { display:flex; flex-direction:column; align-items:center; gap:0; }
+
+.buzzer-scope .status-chip {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.55rem;
+  padding:6px 10px;
+  margin-bottom:10px;
+  border:2px solid var(--panel-edge);
+  background:var(--panel);
+  color:var(--chalk);
+  transition:background .15s ease, color .15s ease;
+}
+
+.buzzer-scope .status-chip.normal { background:var(--led-green); color:#0b3a22; }
+
+.buzzer-scope .status-chip.pressed { background:var(--led-yellow); color:#4a3a10; }
+
+.buzzer-scope .status-chip.disabled { background:#555c72; color:#c9cede; }
+
+.buzzer-scope .panel-housing {
+  position:relative;
+  width:clamp(270px, 42vw, 350px);
+  height:clamp(202px, 31vw, 258px);
+  border-radius:20px;
+  background:linear-gradient(180deg, #3a4258 0% 30%, var(--panel) 30% 68%, #2a3040 68% 100%);
+  border:4px solid var(--panel-edge);
+  box-shadow:
+    inset 0 0 0 3px #4d5670,
+    inset 0 -10px 18px rgba(0,0,0,0.25),
+    0 10px 0 var(--panel-edge);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.buzzer-scope .screw {
+  position:absolute; width:11px; height:11px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #cfd4e0 0% 40%, #7c8199 40% 75%, #454b5f 75% 100%);
+  border:1.5px solid var(--panel-edge);
+  box-shadow:0 0 0 1px var(--panel-edge);
+}
+
+.buzzer-scope .screw.tl { top:12px; left:14px; }
+
+.buzzer-scope .screw.tr { top:12px; right:14px; }
+
+.buzzer-scope .screw.bl { bottom:12px; left:14px; }
+
+.buzzer-scope .screw.br { bottom:12px; right:14px; }
+
+.buzzer-scope .side-loop {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:16px; height:30px;
+  border-radius:6px;
+  background:linear-gradient(180deg, #8a4a44 0% 50%, #5c2a26 50% 100%);
+  border:2px solid var(--panel-edge);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.buzzer-scope .side-loop.left { left:-8px; }
+
+.buzzer-scope .leds { position:absolute; top:16px; left:50%; transform:translateX(-50%); display:flex; gap:9px; }
+
+.buzzer-scope .led { width:10px; height:10px; border-radius:3px; box-shadow:0 0 0 1px var(--panel-edge); }
+
+.buzzer-scope .led.g { background:var(--led-green); box-shadow:0 0 6px rgba(61,220,132,0.7), 0 0 0 1px var(--panel-edge); }
+
+.buzzer-scope .led.y { background:var(--led-yellow); box-shadow:0 0 6px rgba(255,210,63,0.7), 0 0 0 1px var(--panel-edge); }
+
+.buzzer-scope .led.r { background:#4a1010; }
+
+.buzzer-scope .led.r.on { background:var(--led-red); box-shadow:0 0 8px var(--led-red), 0 0 0 1px var(--panel-edge); }
+
+.buzzer-scope .btn-wrap { position:relative; width:clamp(196px, 29vw, 250px); height:clamp(196px, 29vw, 250px); }
+
+.buzzer-scope .btn-base {
+  position:absolute; inset:0;
+  border-radius:50%;
+  background:radial-gradient(circle at 50% 40%, #e7e9f0 0% 38%, #b7bccb 38% 72%, #8b90a3 72% 100%);
+  border:3px solid var(--panel-edge);
+  box-shadow:0 10px 0 #5b5f70, 0 10px 0 3px var(--panel-edge);
+}
+
+.buzzer-scope .btn-dome {
+  position:absolute; left:14px; right:14px; top:10px; bottom:24px;
+  border-radius:50%;
+  background:radial-gradient(circle at 38% 32%, var(--btn-red-hi) 0% 32%, var(--btn-red) 32% 68%, var(--btn-red-lo) 68% 100%);
+  border:3px solid var(--panel-edge);
+  box-shadow:0 13px 0 var(--btn-red-dark), 0 13px 0 3px var(--panel-edge);
+  cursor:pointer;
+  transition:transform .06s ease, box-shadow .06s ease;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.buzzer-scope .btn-dome:active { transform:translateY(6px); box-shadow:0 7px 0 var(--btn-red-dark), 0 7px 0 3px var(--panel-edge); }
+
+/* state: pressed */
+
+.buzzer-scope .btn-wrap.pressed .btn-dome {
+  animation: bz-pressDown .55s ease;
+}
+
+@keyframes bz-pressDown {
+  0%{ transform:translateY(0); box-shadow:0 13px 0 var(--btn-red-dark), 0 13px 0 3px var(--panel-edge); }
+  30%{ transform:translateY(11px); box-shadow:0 2px 0 var(--btn-red-dark), 0 2px 0 3px var(--panel-edge); }
+  100%{ transform:translateY(0); box-shadow:0 13px 0 var(--btn-red-dark), 0 13px 0 3px var(--panel-edge); }
+}
+
+.buzzer-scope .spark-bz-burst {
+  position:absolute; inset:-70px; pointer-events:none;
+  opacity:0;
+}
+
+.buzzer-scope .btn-wrap.pressed .spark-bz-burst { animation: bz-burst .55s ease; }
+
+@keyframes bz-burst {
+  0%{ opacity:0; transform:scale(0.4); }
+  35%{ opacity:1; transform:scale(1); }
+  100%{ opacity:0; transform:scale(1.25); }
+}
+
+.buzzer-scope .spark-bz-burst svg { width:100%; height:100%; }
+
+.buzzer-scope .ditekan-label {
+  position:absolute; top:-34px; left:50%; transform:translateX(-50%);
+  background:var(--chalk); color:var(--ink);
+  font-family:'Press Start 2P', monospace; font-size:0.5rem;
+  padding:5px 8px; white-space:nowrap;
+  opacity:0;
+}
+
+.buzzer-scope .ditekan-label::after {
+  content:""; position:absolute; left:50%; bottom:-6px; transform:translateX(-50%);
+  border:6px solid transparent; border-top-color:var(--chalk);
+}
+
+.buzzer-scope .btn-wrap.pressed .ditekan-label { animation: bz-popLabel .9s ease; }
+
+@keyframes bz-popLabel {
+  0%{ opacity:0; transform:translate(-50%,6px); }
+  20%{ opacity:1; transform:translate(-50%,0); }
+  75%{ opacity:1; }
+  100%{ opacity:0; transform:translate(-50%,-4px); }
+}
+
+/* state: disabled (tidak bisa ditekan) */
+
+.buzzer-scope .btn-wrap.disabled .btn-dome { filter:grayscale(0.55) brightness(0.75); cursor:not-allowed; }
+
+.buzzer-scope .btn-wrap.disabled .btn-base { filter:grayscale(0.3) brightness(0.85); }
+
+.buzzer-scope .cross {
+  position:absolute; inset:0; pointer-events:none; opacity:0;
+}
+
+.buzzer-scope .btn-wrap.disabled .cross { opacity:1; }
+
+.buzzer-scope .cross::before, .buzzer-scope .cross::after {
+  content:""; position:absolute; left:22px; right:22px; top:50%; height:10px;
+  background:#d92b2b; box-shadow:0 0 0 2px #6e1219;
+  transform-origin:center;
+}
+
+.buzzer-scope .cross::before { transform:translateY(-50%) rotate(45deg); }
+
+.buzzer-scope .cross::after { transform:translateY(-50%) rotate(-45deg); }
+
+/* state: terkunci (disabled) — TIDAK ada animasi apa pun lagi (dulu ada shake/asap/pop).
+   Menekan tombol saat terkunci tidak melakukan apa-apa; ikon X & warna abu-abu dari
+   .btn-wrap.disabled di atas sudah cukup jadi penanda statis. Begitu boleh menekan lagi,
+   tombol otomatis kembali merah lewat state normal (tidak butuh class/animasi tambahan). */
+
+/* ---- Pencil cup prop ---- */
+
+.buzzer-scope .cup-prop {
+  width:44px; height:52px; position:relative;
+}
+
+.buzzer-scope .cup-body {
+  position:absolute; bottom:0; width:100%; height:34px;
+  background:#4a5568; border:3px solid var(--panel-edge);
+}
+
+.buzzer-scope .pencil { position:absolute; bottom:26px; width:6px; height:38px; border-radius:2px 2px 0 0; }
+
+.buzzer-scope .pencil.p1 { background:#ffd23f; left:6px; transform:rotate(-10deg); }
+
+.buzzer-scope .pencil.p2 { background:#e63946; left:18px; transform:rotate(3deg); }
+
+.buzzer-scope .pencil.p3 { background:#3ddc84; left:30px; transform:rotate(12deg); }
+
+.buzzer-scope footer {
+  color:#5b6480; font-size:0.9rem; padding:6px 0 20px;
+}
+
+@media (max-width:640px) {
+.buzzer-scope .desk { gap:16px; padding-bottom:16px; }
+.buzzer-scope .nameplate { min-width:120px; }
+.buzzer-scope .board-controls { justify-content:center; }
+}
+
+.buzzer-scope .pixel-grain {
+  position:fixed; inset:0; z-index:50; pointer-events:none;
+  background-image:repeating-linear-gradient(
+    0deg, rgba(0,0,0,0.09) 0px, rgba(0,0,0,0.09) 1px, transparent 1px, transparent 3px
+  );
+  mix-blend-mode:overlay;
+  opacity:0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+.buzzer-scope * { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+}
+
+/* ---------------- KARTU STRATEGI ---------------- */
+
+.buzzer-scope .card-tray {
+  width:100%;
+  max-width:640px;
+  margin:14px auto 0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.buzzer-scope .card-tray-label {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.55rem;
+  color:#9aa3c2;
+  letter-spacing:1px;
+  text-align:center;
+}
+
+.buzzer-scope .card-tray-row {
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.buzzer-scope .card-chip {
+  position:relative;
+  font-family:'Press Start 2P', monospace;
+  font-size:0.55rem;
+  color:#e9d9ff;
+  background:linear-gradient(180deg,#6b47a8,#4a2e78);
+  border:2px solid #2e1c4a;
+  box-shadow:0 4px 0 #2e1c4a;
+  padding:12px 10px 9px;
+  min-width:76px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  transition:transform .05s ease, filter .15s ease;
+}
+
+.buzzer-scope .card-chip:hover:not(:disabled) { filter:brightness(1.15); }
+
+.buzzer-scope .card-chip:active:not(:disabled) { transform:translateY(4px); box-shadow:0 0 0 #2e1c4a; }
+
+.buzzer-scope .card-chip:disabled {
+  cursor:not-allowed;
+  filter:grayscale(0.7) brightness(0.55);
+}
+
+.buzzer-scope .card-chip .card-emoji { font-size:1.1rem; }
+
+.buzzer-scope .card-chip .card-stock {
+  position:absolute; top:-8px; right:-8px;
+  background:var(--led-yellow); color:#3a2513;
+  border:2px solid var(--panel-edge);
+  border-radius:50%;
+  width:22px; height:22px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.55rem;
+}
+
+/* ---- Banner kartu sedang pending (menunggu keputusan panitia) ---- */
+
+.buzzer-scope .card-pending-banner {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.58rem;
+  color:var(--led-yellow);
+  background:var(--panel);
+  border:2px solid var(--panel-edge);
+  box-shadow:0 4px 0 var(--panel-edge);
+  padding:10px 14px;
+  text-align:center;
+  line-height:1.7;
+}
+
+.buzzer-scope .card-pending-banner.success { color:var(--led-green); border-color:var(--led-green); }
+
+.buzzer-scope .card-pending-banner.fail { color:var(--led-red); border-color:var(--led-red); }
+
+/* ---- Kotak reveal PETUNJUK / PENGHAPUS PILIHAN (privat, tampil di layar tim ini saja) ---- */
+
+.buzzer-scope .card-reveal-box {
+  width:100%;
+  max-width:640px;
+  margin:10px auto 0;
+  background:#1f2b1f;
+  border:2px solid var(--led-green);
+  box-shadow:0 4px 0 #12341f;
+  padding:10px 14px;
+  color:var(--led-green);
+}
+
+.buzzer-scope .card-reveal-box .crb-label {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.5rem;
+  letter-spacing:1px;
+  margin-bottom:6px;
+  opacity:0.85;
+}
+
+.buzzer-scope .card-reveal-box .crb-body {
+  font-size:1.15rem;
+  line-height:1.35;
+}
+
+.buzzer-scope .card-reveal-box .crb-opt {
+  display:block;
+}
+
+/* ---- Overlay modal: detail kartu + pilih target ---- */
+
+.buzzer-scope .card-modal-backdrop {
+  position:fixed; inset:0; z-index:60;
+  background:rgba(10,12,20,0.78);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+
+.buzzer-scope .card-modal {
+  width:100%; max-width:360px;
+  background:var(--panel);
+  border:3px solid var(--panel-edge);
+  box-shadow:0 10px 0 rgba(0,0,0,0.4);
+  padding:18px;
+  color:var(--chalk);
+}
+
+.buzzer-scope .card-modal .cm-title {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.7rem;
+  color:var(--led-yellow);
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+
+.buzzer-scope .card-modal .cm-info {
+  font-size:1.05rem;
+  line-height:1.4;
+  color:#c9c2ac;
+  margin-bottom:14px;
+}
+
+.buzzer-scope .card-modal .cm-targets {
+  display:flex; flex-direction:column; gap:8px; margin-bottom:14px;
+}
+
+.buzzer-scope .card-modal .cm-target-btn {
+  font-family:'VT323', monospace;
+  font-size:1.05rem;
+  text-align:left;
+  padding:8px 10px;
+  background:var(--panel-dark);
+  border:2px solid var(--panel-edge);
+  color:var(--chalk);
+  cursor:pointer;
+}
+
+.buzzer-scope .card-modal .cm-target-btn:hover { border-color:var(--led-yellow); }
+
+.buzzer-scope .card-modal .cm-target-btn.selected {
+  border-color:var(--led-green);
+  color:var(--led-green);
+}
+
+.buzzer-scope .card-modal .cm-actions {
+  display:flex; gap:8px; justify-content:flex-end;
+}
+
+/* ---- Baris label kartu tray + tombol Info Kartu ---- */
+
+.buzzer-scope .card-tray-label-row {
+  display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+}
+
+.buzzer-scope .info-card-btn {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.48rem;
+  color:var(--led-yellow);
+  background:var(--panel-dark);
+  border:2px solid var(--panel-edge);
+  padding:5px 8px;
+  cursor:pointer;
+}
+
+.buzzer-scope .info-card-btn:hover { border-color:var(--led-yellow); }
+
+/* ---- Modal Info Kartu: daftar seluruh kartu & aturannya ---- */
+
+.buzzer-scope .info-modal { max-width:440px; max-height:80vh; overflow-y:auto; }
+
+.buzzer-scope .info-modal-list { display:flex; flex-direction:column; gap:12px; margin-bottom:14px; }
+
+.buzzer-scope .info-modal-item {
+  border:2px solid var(--panel-edge);
+  background:var(--panel-dark);
+  padding:8px 10px;
+}
+
+.buzzer-scope .info-modal-item-head {
+  display:flex; align-items:center; gap:8px;
+  color:var(--led-yellow);
+  margin-bottom:6px;
+}
+
+.buzzer-scope .info-modal-item-body {
+  font-size:0.95rem;
+  line-height:1.4;
+  color:#c9c2ac;
+}
+
+/* ---- Notifikasi kecil (toast), pojok atas layar, hilang otomatis ---- */
+
+.buzzer-scope .card-toast-stack {
+  position:fixed; top:14px; left:50%; transform:translateX(-50%);
+  z-index:80;
+  display:flex; flex-direction:column; gap:6px;
+  align-items:center;
+  pointer-events:none;
+}
+
+.buzzer-scope .card-toast {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.5rem;
+  color:var(--chalk);
+  background:var(--panel);
+  border:2px solid var(--panel-edge);
+  box-shadow:0 4px 0 var(--panel-edge);
+  padding:8px 12px;
+  white-space:nowrap;
+  animation: bz-popLabel 3.2s ease;
+}
+
+.buzzer-scope .card-toast.success { border-color:var(--led-green); color:var(--led-green); }
+
+.buzzer-scope .card-toast.fail { border-color:var(--led-red); color:var(--led-red); }
+
+/* ---- Popup besar (hasil kartu), tengah layar, hanya untuk tim yang berkaitan ---- */
+
+.buzzer-scope .card-popup-backdrop {
+  position:fixed; inset:0; z-index:90;
+  background:rgba(10,12,20,0.7);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+
+.buzzer-scope .card-popup {
+  font-family:'Press Start 2P', monospace;
+  font-size:0.75rem;
+  line-height:1.8;
+  text-align:center;
+  color:var(--chalk);
+  background:var(--panel);
+  border:3px solid var(--led-yellow);
+  box-shadow:0 10px 0 rgba(0,0,0,0.4);
+  padding:26px 22px;
+  max-width:340px;
+}
+
+.buzzer-scope .card-popup.success { border-color:var(--led-green); color:var(--led-green); }
+
+.buzzer-scope .card-popup.fail { border-color:var(--led-red); color:var(--led-red); }
+/* ---- Panel jawab ronde "Semua Tim Menjawab" (soal simultaneous) ---- */
+
+.buzzer-scope .sim-answer-panel {
+  border:2px solid var(--led-yellow);
+  background:var(--panel);
+  box-shadow:0 4px 0 var(--panel-edge);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.buzzer-scope .sim-answer-title {
+  font-size:0.6rem;
+  color:var(--led-yellow);
+  text-align:center;
+}
+
+.buzzer-scope .sim-answer-options {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.buzzer-scope .sim-answer-option {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-align:left;
+  border:2px solid var(--panel-edge);
+  background:rgba(0,0,0,0.2);
+  color:var(--chalk);
+  padding:10px 12px;
+  font-size:0.95rem;
+  cursor:pointer;
+}
+
+.buzzer-scope .sim-answer-option:hover { border-color:var(--led-yellow); }
+
+.buzzer-scope .sim-answer-option.picked {
+  border-color:var(--led-green);
+  background:rgba(90,200,120,0.15);
+  color:var(--led-green);
+}
+
+.buzzer-scope .sim-answer-input {
+  border:2px solid var(--panel-edge);
+  background:rgba(0,0,0,0.25);
+  color:var(--chalk);
+  padding:10px 12px;
+  font-size:1rem;
+  outline:none;
+}
+
+.buzzer-scope .sim-answer-input:focus { border-color:var(--led-yellow); }

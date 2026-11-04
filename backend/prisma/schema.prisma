@@ -1,0 +1,171 @@
+// Skema database untuk fitur guru: login, bank soal, dan penyusunan kuis.
+// Sesi live yang SEDANG BERLANGSUNG (mode buzzer: tim, giliran, timer) TETAP
+// di memori server (lihat src/matches.ts) — database ini menyimpan data yang
+// perlu bertahan lama: akun guru, bank soal, konfigurasi kuis, dan hasil
+// akhir sesi yang sudah selesai (MatchResult).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  FILL_IN
+}
+
+enum MediaType {
+  NONE
+  IMAGE
+  VIDEO
+}
+
+// Label tingkat kesulitan soal — opsional, cuma dipakai kalau kuis mengaktifkan
+// "Mode Tingkat Kesulitan" (Quiz.difficultyModeEnabled).
+enum Difficulty {
+  MUDAH
+  SEDANG
+  SUSAH
+}
+
+model Teacher {
+  id        String        @id @default(cuid())
+  name      String
+  email     String        @unique
+  password  String // hashed dengan bcrypt, jangan pernah simpan plain text
+  createdAt DateTime      @default(now())
+  questions Question[]
+  quizzes   Quiz[]
+  results   MatchResult[]
+}
+
+model Question {
+  id        String       @id @default(cuid())
+  teacherId String
+  teacher   Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  type      QuestionType
+  text      String
+
+  // Media opsional buat soal (foto, diagram, atau video).
+  // - IMAGE: mediaUrl berisi data URL base64 (upload langsung, dikompres di
+  //   browser) ATAU URL gambar biasa.
+  // - VIDEO: mediaUrl berisi LINK (YouTube/Vimeo/link video langsung) ATAU
+  //   path lokal (/uploads/videos/xxx.mp4) kalau guru upload file langsung.
+  mediaType MediaType @default(NONE)
+  mediaUrl  String?
+
+  // MULTIPLE_CHOICE: array string opsi, misal ["Jakarta","Bandung","Surabaya","Medan"]
+  // TRUE_FALSE dan FILL_IN: null, tidak dipakai.
+  options Json?
+
+  // MULTIPLE_CHOICE: index opsi benar sebagai string, misal "0"
+  // TRUE_FALSE: "true" atau "false"
+  // FILL_IN: jawaban yang diharapkan, dicocokkan tanpa peduli besar/kecil huruf
+  correctAnswer String
+
+  // Kata kunci/sinonim lain yang juga dianggap benar (khususnya untuk FILL_IN),
+  // ditampilkan ke host sebagai bantuan menilai jawaban lisan peserta.
+  acceptableAnswers Json?
+
+  // Petunjuk tambahan untuk soal ini. DISIMPAN SAJA untuk sekarang — belum
+  // ditampilkan atau dipakai di jalannya permainan, menyusul di update
+  // berikutnya (fitur "Kartu Hint").
+  clue String?
+
+  // Label tingkat kesulitan (opsional) — null = belum diberi label. Hanya
+  // relevan/ditampilkan kalau kuis mengaktifkan Mode Tingkat Kesulitan.
+  difficulty Difficulty?
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  quizQuestions QuizQuestion[]
+
+  @@index([teacherId])
+}
+
+model Quiz {
+  id    String @id @default(cuid())
+  title String
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  // Pengaturan poin (checklist: pengaturan poin benar/salah/waktu habis)
+  pointsCorrect        Int @default(100)
+  pointsWrongPenalty   Int @default(0) // dikurangkan dari skor jika jawaban salah
+  pointsTimeoutPenalty Int @default(0) // dikurangkan dari skor jika waktu habis
+
+  // Fitur tambahan (checklist: voting skip, kartu strategi)
+  skipEnabled          Boolean @default(true)
+  strategyCardsPerTeam Int     @default(0) // 0 = fitur kartu strategi nonaktif
+
+  // Mode Tingkat Kesulitan: kalau ON, penyusun kuis bisa memfilter/menyusun
+  // soal berdasarkan label Mudah/Sedang/Susah supaya urutannya tidak monoton.
+  difficultyModeEnabled Boolean @default(false)
+
+  // Ronde "Semua Tim Menjawab": kalau ON, soal-soal di titik 1/4, 2/4, dan 3/4
+  // urutan kuis ini otomatis dijalankan dalam mode serentak (bukan rebutan
+  // bel) — tiap tim dinilai sendiri-sendiri oleh panitia, salah TIDAK
+  // mengurangi poin. Dihitung otomatis dari isi soal yang sudah ada, tidak
+  // perlu soal terpisah. Lihat src/matches.ts (computeSimultaneousIndexes).
+  simultaneousRoundEnabled Boolean @default(false)
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  questions QuizQuestion[]
+  results   MatchResult[]
+
+  @@index([teacherId])
+}
+
+// Tabel penghubung: soal mana saja yang dipakai di kuis mana, urutannya,
+// dan berapa lama timer berpikir/menjawab untuk soal itu di kuis ini
+// (timer bisa beda per soal meski soalnya sama di bank soal).
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  order         Int
+  thinkTimeSec  Int      @default(15) // timer waktu berpikir
+  answerTimeSec Int      @default(20) // timer waktu menjawab
+
+  @@unique([quizId, questionId])
+  @@index([quizId])
+}
+
+// Hasil akhir satu sesi live (mode buzzer) — disimpan begitu sesi berakhir,
+// supaya tidak hilang saat server restart. Sesi yang SEDANG berjalan tetap
+// di memori (lihat src/matches.ts); ini cuma snapshot hasil akhirnya.
+model MatchResult {
+  id          String            @id @default(cuid())
+  matchCode   String // kode sesi 6 digit yang dipakai saat live, buat referensi
+  quizId      String
+  quiz        Quiz              @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  teacherId   String
+  teacher     Teacher           @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  quizTitle   String // disalin saat sesi berakhir, biar tetap ada walau kuisnya diedit/dihapus nanti
+  playedAt    DateTime          @default(now())
+  totalQuestions Int
+  teams       MatchResultTeam[]
+
+  @@index([teacherId])
+  @@index([quizId])
+}
+
+model MatchResultTeam {
+  id            String      @id @default(cuid())
+  matchResultId String
+  matchResult   MatchResult @relation(fields: [matchResultId], references: [id], onDelete: Cascade)
+  name          String
+  score         Int
+  rank          Int // 1 = juara, dihitung saat disimpan
+
+  @@index([matchResultId])
+}
